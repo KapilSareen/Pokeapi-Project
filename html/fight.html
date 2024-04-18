@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fight!</title>
+    <link rel="icon" href="/images/favicon.ico">
+
+    <style>
+        body {
+            user-select: none;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            color: #90b592;
+            background-image: url(/images/battle.jpg);
+            background-size: cover;
+        }
+
+        .main {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            align-items: start;
+        }
+
+        .range-meter {
+            width: 65%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .range-meter-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 5px;
+        }
+
+        .rangediv {
+            display: flex;
+            gap: 100px;
+            justify-content: space-between;
+        }
+
+
+
+        .tail {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+
+        }
+
+        .tail button {
+            color: #3f0a0a;
+            padding: 8px 41px;
+            background-color: rgb(131 243 131 / 50%);
+            border-radius: 15px;
+            font-size: 17px;
+            margin-top: 20px;
+            font-family: system-ui;
+            cursor: pointer;
+        }
+
+        .range-meter {
+            width: 100px;
+        }
+
+
+        .card {
+            border: 1px solid rgba(192, 148, 148, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            height: 63vh;
+            width: 470px;
+            box-shadow: 7px 7px 8px rgba(0, 0, 0, 0.3);
+            background-color: rgb(102 101 101 / 40%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .imgdiv {
+            margin-bottom: 20px;
+            background-color: rgb(255 166 166 / 10%);
+            border-radius: 15px;
+            width: 276px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30vh;
+
+        }
+
+        .stats {
+            margin-bottom: 20px;
+        }
+
+        .rangediv {
+            margin-bottom: 10px;
+        }
+
+        .range-meter {
+            background-color: #ddd;
+            height: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .range-meter-fill {
+            height: 100%;
+            background-color: #4caf50;
+        }
+
+        .moves div {
+            margin-bottom: 5px;
+        }
+
+        .move-button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: 2px solid #4caf50;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .move-button:hover {
+            background-color: #45a049;
+        }
+
+        .move-button:focus {
+            outline: none;
+        }
+
+        *,
+        *::after,
+        *::before {
+            box-sizing: border-box;
+        }
+
+        .modal {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            position: fixed;
+            top: 50%;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: 200ms ease-in-out;
+            border: 1px solid black;
+            border-radius: 10px;
+            z-index: 10;
+            background-color: white;
+            width: 500px;
+            max-width: 80%;
+            height: 20vh;
+        }
+
+        .modal.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            width: 100%;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid black;
+        }
+
+        .stats {
+            display: flex;
+            flex-direction: column;
+            font-size: 18px;
+        }
+
+        .modal-header .title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .modal-header .close-button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            background: none;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 10px 15px;
+            font-size: 19px;
+        }
+
+        #overlay {
+            position: fixed;
+            opacity: 0;
+            transition: 200ms ease-in-out;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+
+        #overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .moves {
+            display: flex;
+            gap: 5px;
+            font-size: 18px;
+            justify-content: center;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            flex-wrap: wrap;
+        }
+
+        .head {
+            font-size: 40px;
+            text-align: center;
+            padding: 35px 0px;
+            font-family: system-ui;
+        }
+
+        .right {
+            pointer-events: none;
+            /* Disable pointer events for all descendants */
+        }
+    </style>
+</head>
+
+<body>
+    <audio id="bgMusic" autoplay loop hidden>
+        <source src="/songs/Opening.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <div class="head"></div>
+    <div class="main">
+
+        <div class="left card">
+            <div class="left_name name"></div>
+            <div class="left_imgdiv imgdiv"></div>
+
+            <div class="left_stats stats"></div>
+
+            <div class="left_moves moves"></div>
+
+        </div>
+
+        <div class="vs"><img width="200" style='filter: invert(100%);' src="/images/versus.svg" alt="versus"></div>
+        <div class="right card">
+            <div class="right_name name"></div>
+            <div class="right_imgdiv imgdiv"></div>
+
+            <div class="right_stats stats"></div>
+
+            <div class="right_moves moves"></div>
+        </div>
+    </div>
+
+    <div class="tail"></div>
+
+    <script >
+
+function updateRightStats(right_pokemon, right_hp) {
+    document.querySelector(".right_stats").innerHTML = `
+        <div class="rangediv">${right_pokemon.stats[0].stat.name.toUpperCase()}:${right_hp}
+            <div class="range-meter">
+                <div class="range-meter-fill" style="width: ${(right_hp / 150) * 100}%"></div>
+            </div>
+        </div>
+        <div class="rangediv">${right_pokemon.stats[1].stat.name.toUpperCase()}:${right_pokemon.stats[1].base_stat}
+            <div class="range-meter">
+                <div class="range-meter-fill" style="width: ${(right_pokemon.stats[1].base_stat / 150) * 100}%"></div>
+            </div>
+        </div>
+        <div class="rangediv">${right_pokemon.stats[2].stat.name.toUpperCase()}:${right_pokemon.stats[2].base_stat/2}
+            <div class="range-meter">
+                <div class="range-meter-fill" style="width: ${(right_pokemon.stats[2].base_stat / 300) * 100}%"></div>
+            </div>
+        </div>`
+}
+
+function updateLeftStats(left_pokemon, left_hp) {
+    document.querySelector(".left_stats").innerHTML = `
+        <div class="rangediv">${left_pokemon.stats[0].stat.name.toUpperCase()}:${left_hp}
+            <div class="range-meter">
+                <div class="range-meter-fill" style="width: ${(left_hp / 150) * 100}%"></div>
+            </div>
+        </div>
+        <div class="rangediv">${left_pokemon.stats[1].stat.name.toUpperCase()}:${left_pokemon.stats[1].base_stat}
+            <div class="range-meter">
+                <div class="range-meter-fill" style="width: ${(left_pokemon.stats[1].base_stat / 150) * 100}%"></div>
+            </div>
+        </div>
+        <div class="rangediv">${left_pokemon.stats[2].stat.name.toUpperCase()}:${left_pokemon.stats[2].base_stat/2}
+            <div class="range-meter">
+                <div class="range-meter-fill" style="width: ${(left_pokemon.stats[2].base_stat / 300) * 100}%"></div>
+            </div>
+        </div>`
+}
+
+        document.addEventListener("DOMContentLoaded", async function () {
+        var queryParams = new URLSearchParams(window.location.search);
+        var leftId = queryParams.get('left');
+        var rightId = queryParams.get('right');
+        
+            
+            let left = await fetch("https://pokeapi.co/api/v2/pokemon/" + leftId);
+            let left_pokemon = await left.json();
+            var left_hp=left_pokemon.stats[0].base_stat
+            const left_defence=left_pokemon.stats[2].base_stat
+            console.log("Your pokemon: ", left_pokemon.name)
+
+            let right = await fetch("https://pokeapi.co/api/v2/pokemon/" + rightId);
+            let right_pokemon = await right.json();
+            var right_hp=right_pokemon.stats[0].base_stat
+            const right_defence=right_pokemon.stats[2].base_stat
+            console.log("Opponent pokemon: ", right_pokemon.name)
+
+
+           ///////////////// Left Card //////////////
+
+
+            document.querySelector(".left_name").innerHTML=`${left_pokemon.name.toUpperCase()}`
+            document.querySelector(".left_imgdiv").innerHTML=`<img width="200" src=${left_pokemon.sprites.front_default} />`
+            updateLeftStats(left_pokemon,left_hp)
+            async function fetchmove(side, move_index) {
+            var a = await fetch(side.moves[move_index].move.url);
+            var response = await a.json();
+            
+            var moveDetails = {
+                name: side.moves[move_index].move.name,
+                accuracy: response.accuracy,
+                power: response.power
+            };
+            
+            return moveDetails;
+        }
+
+        const leftMovesContainer = document.querySelector(".left_moves");
+
+    for (let i = 0; i < 5; i++) {
+    var move = await fetchmove(left_pokemon, i);
+    var moveButton = document.createElement("div");
+
+    let modalId = "modal-" + i;
+    let closeButtonId = "close-button-" +i;
+
+    moveButton.innerHTML = `
+        <div data-modal-target="#${modalId}">${move.name}</div>
+        <div class="modal" id="${modalId}">
+            <div class="modal-header">
+                <div class="title">${left_pokemon.name} attacks!!</div>
+                <button data-close-button class="close-button" id="${closeButtonId}">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div>
+${move.name.toUpperCase()}<div> 
+Damage:${move.power /3}</div>
+        </div>
+        <div id="overlay"></div>`
+    moveButton.dataset.accuracy = move.accuracy;
+    moveButton.dataset.power = move.power;
+    moveButton.classList.add("move-button");
+    leftMovesContainer.appendChild(moveButton);
+}
+
+
+
+
+            
+     //////////////// Right Card ///////////////////
+
+
+    document.querySelector(".right_name").innerHTML=`${right_pokemon.name.toUpperCase()}`
+    document.querySelector(".right_imgdiv").innerHTML=`<img width="200" src=${right_pokemon.sprites.front_default} />`
+    updateRightStats(right_pokemon,right_hp)
+                
+
+    const rightMovesContainer = document.querySelector(".right_moves");
+    for (let i = 6; i < 11; i++) {
+    var move = await fetchmove(right_pokemon, i);
+    var moveButton = document.createElement("div");
+
+    let modalId = "modal-" + (i);
+    let closeButtonId = "close-button-" + (i);
+
+    moveButton.innerHTML = `
+
+    <div data-modal-target="#${modalId}">${move.name}</div>
+            <div class="modal" id="${modalId}">
+                <div class="modal-header">
+                    <div class="title">${right_pokemon.name} attacks!</div>
+                    <button data-close-button class="close-button" id="${closeButtonId}">&times;</button>
+                </div>
+                <div class="modal-body">
+                    ${move.name.toUpperCase()}<div> 
+                    Damage:${move.power / 3}</div>
+                </div>
+                <div id="overlay"></div>
+    `;
+    moveButton.dataset.accuracy = move.accuracy;
+    moveButton.dataset.power = move.power;
+    moveButton.classList.add("move-button");
+    rightMovesContainer.appendChild(moveButton);
+}
+
+const openModalButtons = document.querySelectorAll('[data-modal-target]')
+const closeModalButtons = document.querySelectorAll('[data-close-button]')
+const overlay = document.getElementById('overlay')
+
+
+openModalButtons.forEach(button => {
+    let isButtonClickable = true;
+    button.addEventListener('click', event => {
+        if (!isButtonClickable) return;
+        isButtonClickable = false;
+        openModalButtons.forEach(btn => {
+            btn.disabled = true;
+        });
+        const parentDiv = event.target.closest('.move-button');
+        const power = parentDiv.getAttribute('data-power');
+        const accuracy = parentDiv.getAttribute('data-accuracy');
+        console.log('HP',right_hp)
+        console.log('DEFENCE',right_defence)
+        console.log("Power:", power);
+        console.log("Accuracy:", accuracy);
+
+        const secondParentClass = parentDiv.parentNode.parentNode.classList;
+
+        console.log(secondParentClass)
+
+
+if (power != "null") {
+     if("left" == secondParentClass[0]){
+            console.log("no")
+            console.log()
+            if(right_hp>0){
+            if(right_hp>power/3){
+                if(power>=right_defence/2 ){
+
+                    right_hp=right_hp- (power/3)
+             const modal = document.querySelector(button.dataset.modalTarget);
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.zIndex = 0;
+            });
+            modal.style.zIndex = 1;
+            openModal(modal);
+                    updateRightStats(right_pokemon,right_hp)
+                }
+                else{
+
+                    
+                    const modal = document.querySelector(button.dataset.modalTarget);
+                    document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.zIndex = 0;
+                    });
+                    modal.style.zIndex = 1;
+                    openModal(modal);
+                }
+            }
+            else{
+                
+            const modal = document.querySelector(button.dataset.modalTarget);
+            document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.zIndex = 0;
+            });
+            modal.style.zIndex = 1;
+            openModal(modal);
+                right_hp=0
+                updateRightStats(right_pokemon,right_hp)
+                
+                // Win /// 
+
+                setTimeout(() => {
+                alert("You Win!!");
+                
+                document.querySelector(".head").innerHTML="Winner:"
+                var  element=document.querySelector(".right")
+                element.parentNode.removeChild(element);
+
+                element=document.querySelector(".vs")
+                element.parentNode.removeChild(element);
+                
+                element=document.querySelector(".left_moves")
+                element.parentNode.removeChild(element);
+
+                var stat = document.querySelector(".imgdiv");
+                stat.style.marginBottom = "60px";
+                document.querySelector(".tail").innerHTML=`<button onclick="window.location.href='/index.html'">Home</button>
+                <button onclick="window.location.href='/html/battle.html'">Battle</button>
+                `
+
+            }, 2000);        
+        }
+    }
+        else{
+
+            updateRightStats(right_pokemon,right_hp)
+            
+            setTimeout(() => {
+                alert("You win!");
+            }, 2000); 
+        }
+    }
+
+    else if("right" ==secondParentClass[0]){
+        console.log("no")
+            console.log()
+            if(left_hp>0){
+            if(left_hp>power/4){
+
+                if(power>=left_defence/2){
+
+            left_hp=left_hp- (power/4)
+            const modal = document.querySelector(button.dataset.modalTarget);
+            document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.zIndex = 0;
+            });
+            modal.style.zIndex = 1;
+            openModal(modal);
+                    updateLeftStats(left_pokemon,left_hp)
+                }
+                else{
+                    const modal = document.querySelector(button.dataset.modalTarget);
+                    document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.zIndex = 0;
+                    });
+                    modal.style.zIndex = 1;
+                    openModal(modal);
+                }
+            }
+            else{
+                
+                const modal = document.querySelector(button.dataset.modalTarget);
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.zIndex = 0;
+                });
+                modal.style.zIndex = 1;
+                openModal(modal);
+                left_hp = 0;
+                updateLeftStats(left_pokemon, left_hp);
+                setTimeout(() => {
+                    alert("You Lose!");
+                    document.querySelector(".head").innerHTML="Winner:"
+
+                    var  element=document.querySelector(".left")
+                    element.parentNode.removeChild(element);
+    
+                    element=document.querySelector(".vs")
+                    element.parentNode.removeChild(element);
+                    
+                    element=document.querySelector(".right_moves")
+                    element.parentNode.removeChild(element);
+    
+            var stat = document.querySelector(".imgdiv");
+                    stat.style.marginBottom = "60px";
+                    document.querySelector(".tail").innerHTML=`<button href="/index.html">Home</button ><button href="/html/battle.html">Battle</button>`
+
+                }, 2000);    
+        }
+    }
+        else{
+
+            updateRightStats(left_pokemon,left_hp)
+            
+            const modal = document.querySelector(button.dataset.modalTarget);
+            document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.zIndex = 0;
+            });
+            modal.style.zIndex = 1;
+            openModal(modal);
+            setTimeout(() => {
+                alert("You lost2!");
+            }, 0); 
+        }}
+    }
+    else{
+        const modal = document.querySelector(button.dataset.modalTarget);
+        document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.zIndex = 0;
+            });
+            modal.style.zIndex = 1;
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'all';
+            openModal(modal);
+    }
+
+
+    if("left" == secondParentClass[0]){
+        if(right_hp>0){
+
+            setTimeout(() => {
+                let rand = Math.floor(Math.random() * 5 + 6);
+                console.log(rand , "rand")
+                let element = document.querySelector(`[data-modal-target="#modal-${rand}"]`);
+                element.click()
+            }, 1500);
+        } 
+}
+
+setTimeout(() => {
+    isButtonClickable = true;
+    openModalButtons.forEach(btn => {
+        btn.disabled = false;
+    });
+}, 8000);
+
+
+    });
+
+});
+
+
+overlay.addEventListener('click', () => {
+    const modals = document.querySelectorAll('.modal.active')
+    modals.forEach(modal => {
+        closeModal(modal)
+    })
+})
+
+closeModalButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const modal = button.closest('.modal')
+        closeModal(modal)
+    })
+})
+
+function openModal(modal) {
+    if (modal == null) return
+    modal.classList.add('active')
+    overlay.classList.add('active')
+}
+
+function closeModal(modal) {
+    if (modal == null) return
+    modal.classList.remove('active')
+    overlay.classList.remove('active')
+}
+});
+
+
+
+
+    </script>
+</body>
+
+</html>

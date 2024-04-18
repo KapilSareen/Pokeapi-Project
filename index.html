@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokégame</title>
+    <link rel="icon" href="/images/favicon.ico">
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box; /* Ensures padding and border are included in element's total width and height */
+        }
+
+        body {
+            background-image: url(images/bg1.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0% 45%;
+            font-family: Arial, sans-serif; /* Specify a fallback font family */
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh; /* Make the container fill the viewport height */
+        }
+
+        .logo {
+            margin-bottom: 70px; /* Add spacing between logo and buttons */
+        }
+
+        .btns {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Add vertical spacing between buttons */
+        }
+
+        .btns button {
+            height: 70px;
+            width: 300px;
+            border: none;
+            border-radius: 10px;
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+        .btns button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+    </style>
+</head>
+
+<body>
+
+        
+    <div class="main">
+        <div class="logo"><img width="450" src="images/pngegg.png" alt="" srcset=""></div>
+        <div class="btns">
+            <button id="battle" onclick="redirect_to_battle()" >Battle</button>
+            <button id="pokedex" onclick="redirect_to_pokedex()">Pokédex</button>
+            <button id="info" onclick="redirect_to_info()">Info</button>
+        </div>
+    </div>
+    <audio id="bgMusic" loop hidden>
+        <source src="/songs/Center.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        const redirect_to_pokedex = () => {
+            window.location.href = "./html/pokedex.html";
+        }
+        const redirect_to_battle = () => {
+            window.location.href = "./html/battle.html";
+        }
+        const redirect_to_info = () => {
+            window.location.href = "./html/info.html";
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+    var audio = document.getElementById("bgMusic");
+ 
+        audio.play().then(function() {
+            console.log("Audio is playing.");
+        }).catch(function(error) {
+            console.error("Error playing audio:", error);
+        });
+    }
+);
+    
+</script>
+</body>
+
+</html>

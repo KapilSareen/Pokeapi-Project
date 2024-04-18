@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="icon" href="/images/favicon.ico">
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    
+    html {
+        scrollbar-width: none;
+    }
+    
+    body {
+        scrollbar-width: none;
+        background-image: url(/images/pokemon-bg\ \(1\).jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: 0% 80%;
+        overflow-y: hidden;
+        color: #FFFFFF;
+        font-family: 'Raleway', sans-serif;
+    }
+    body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(97 96 96 / 15%);
+    z-index: -1; /* Place the overlay behind other content */
+}
+
+    .logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 35px;
+    }
+
+    .main {
+        gap: 530px;
+        display: flex;
+        justify-content: center;
+        padding-bottom: 50px;
+    }
+
+    .card {
+        transform: translate(-80px, 0);
+    background-color: #a09999;
+    border-radius: 30px;
+    padding: 20px;
+    height: 560px;
+    width: 530px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+
+    }
+
+
+    .imgdiv {
+        border-radius: 15px;
+        background-color: #7b7777;
+        margin: 15px 0px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .typediv {
+        background-color: #c0b49f;
+        margin: 10px 14px;
+        border-radius: 20px;
+        padding: 5px 20px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .typediv:hover {
+        background-color: #FF8C69;
+    }
+
+    .range-meter {
+        width: 65%;
+        height: 10px;
+        background-color: #ddd;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+
+    .range-meter-fill {
+        height: 100%;
+        background-color: #4CAF50;
+        border-radius: 5px;
+    }
+
+    .discdiv {
+        padding: 20px;
+        font-size: 18px;
+        line-height: 1.5;
+        text-align: justify;
+    }
+
+    .name {
+        text-align: center;
+        font-size: 30px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        color: #c0b49f;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .statdiv {
+        display: flex;
+        padding-top: 10px;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 18px;
+        padding: 0px 20px;
+    }
+
+    .statdiv div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .left {
+    padding: 20px;
+    height: 65vh;
+    width: 650px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-radius: 25px;
+    background-color:rgba(137, 123, 123,50%);
+    backdrop-filter: blur(5px); 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); 
+}
+
+.left div {
+    border: none;
+    border-radius: 20px;
+    background-color: #746d6d;
+    padding: 12px;
+    width: 300px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 24px;
+    font-family: 'monospace', sans-serif;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.left div:hover {
+    background-color: #c4527b; 
+    color: #ffffff; 
+    transform: translateY(-5px); 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
+}
+</style>
+
+<body>
+    
+    <div class="logo"><img src="/images/pokedex.png" alt=""></div>
+    <div class="main">
+        <div class="left">
+
+        </div>
+        <div class="right">
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <audio id="bgMusic" autoplay loop hidden>
+        <source src="/songs/Guide.mp3" type="audio/mpeg">
+    </audio>
+
+
+
+
+
+    <script>
+
+        const capitalizeFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+        let poke = Math.floor(Math.random() * 1000);
+        document.addEventListener("DOMContentLoaded", async function main() {
+           
+            var audio = document.getElementById("bgMusic");
+
+            if (audio.canPlayType && audio.src) {
+                audio.play().then(function () {
+                }).catch(function (error) {
+                    console.error("Error playing audio:", error);
+                });
+            }
+
+            try {
+                let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + poke);
+                let pokemon = await response.json();
+                var newCard = document.createElement("div");
+
+                newCard.classList.add("card");
+                var mainDiv = document.querySelector('.right');
+                mainDiv.appendChild(newCard);
+                newCard.innerHTML = `<div class="name">${pokemon.name.toUpperCase()}</div>`;
+                imgdiv = document.createElement("div")
+                imgdiv.classList.add("imgdiv")
+                imgdiv.innerHTML = `<img width="230" src=${pokemon.sprites.front_default} />`
+                newCard.appendChild(imgdiv)
+                typecont=document.createElement('div')
+                typecont.classList.add("typecont")
+                for (let index = 0; index < pokemon.types.length; index++) {
+                    const type = pokemon.types[index];
+                    var typeDiv = document.createElement("span");
+                    typeDiv.classList.add("typediv")
+                    typeDiv.textContent = type.type.name;
+                    
+                    typecont.appendChild(typeDiv);
+                }
+                newCard.appendChild(typecont)
+                discdiv = document.createElement("div")
+                res = await fetch(pokemon["species"]["url"]);
+                let pokemonDesc = await res.json();
+                pokemonDesc = pokemonDesc["flavor_text_entries"][1]["flavor_text"].replace(/\n/g, ' ').replace("", "");
+                discdiv.classList.add("discdiv")
+                discdiv.innerText = pokemonDesc
+                newCard.appendChild(discdiv)
+                statdiv = document.createElement("div")
+                statdiv.classList.add("statdiv")
+                statdiv.innerHTML = `
+                <div>${pokemon.stats[0].stat.name.toUpperCase()}: ${pokemon.stats[0].base_stat}
+            <div class="range-meter">
+              <div class="range-meter-fill" style="width: ${(pokemon.stats[0].base_stat / 150) * 100}%"></div>
+            </div>
+          </div>                 <div>${pokemon.stats[1].stat.name.toUpperCase()}: ${pokemon.stats[1].base_stat}
+            <div class="range-meter">
+              <div class="range-meter-fill" style="width: ${(pokemon.stats[1].base_stat / 150) * 100}%"></div>
+            </div>
+          </div>                <div>${pokemon.stats[2].stat.name.toUpperCase()}: ${pokemon.stats[2].base_stat}
+            <div class="range-meter">
+              <div class="range-meter-fill" style="width: ${(pokemon.stats[2].base_stat / 150) * 100}%"></div>
+            </div>
+          </div>
+                `
+                newCard.appendChild(statdiv)
+
+            } catch (error) {
+                console.error("Error fetching data for pokemon with index " + poke + ":", error);
+            }
+
+
+
+            var listdiv = document.querySelector(".left")
+            for (let i = 1; i < 300; i++) {
+                try {
+                    let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + i);
+                    let pokemon = await response.json();
+                    listdiv.innerHTML = listdiv.innerHTML + `<div id="${i}" class="listentry">${capitalizeFirstLetter(pokemon.name)}</div>`;
+
+                } catch (error) {
+                    console.log(error)
+                }
+
+            }
+            document.querySelectorAll(".listentry").forEach((entry) => {
+                entry.addEventListener("click", async function (e) {
+                    console.log(entry.id)
+                    let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + entry.id);
+                    let pokemon = await response.json();
+                    console.log(pokemon.name)
+                    var mainDiv = document.querySelector('.right');
+                    mainDiv.innerHTML = `<div class="card"><div class="name">${pokemon.name.toUpperCase()}</div><div class="imgdiv"><img width="230" src="${pokemon.sprites.front_default}"></div><div class="typecont"></div><div class="discdiv"></div><div class="statdiv"><div>${pokemon.stats[0].stat.name.toUpperCase()}: ${pokemon.stats[0].base_stat}
+            <div class="range-meter">
+              <div class="range-meter-fill" style="width: ${(pokemon.stats[0].base_stat / 150) * 100}%"></div>
+            </div>
+          </div>                 <div>${pokemon.stats[1].stat.name.toUpperCase()}: ${pokemon.stats[1].base_stat}
+            <div class="range-meter">
+              <div class="range-meter-fill" style="width: ${(pokemon.stats[1].base_stat / 150) * 100}%"></div>
+            </div>
+          </div>                <div>${pokemon.stats[2].stat.name.toUpperCase()}: ${pokemon.stats[2].base_stat}
+            <div class="range-meter">
+              <div class="range-meter-fill" style="width: ${(pokemon.stats[2].base_stat / 150) * 100}%"></div>
+            </div>
+          </div></div>`
+
+            let typecont= document.querySelector(".typecont")
+            for (let index = 0; index < pokemon.types.length; index++) {
+                    const type = pokemon.types[index];
+                    var typeDiv = document.createElement("span");
+                    typeDiv.classList.add("typediv")
+                    typeDiv.textContent = type.type.name;
+                    
+                    typecont.appendChild(typeDiv);
+                }
+                res = await fetch(pokemon["species"]["url"]);
+                let pokemonDesc = await res.json();    
+            let discdiv=document.querySelector(".discdiv")
+            discdiv.innerHTML=pokemonDesc["flavor_text_entries"][1]["flavor_text"].replace(/\n/g, ' ').replace("", "")
+                });
+            });
+
+
+        });
+
+
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+

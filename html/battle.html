@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle!</title>
+    <link rel="icon" href="/images/favicon.ico">
+    <style>
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+       .midimg img{
+        border-radius: 18px;
+        opacity: 0.85;
+       }
+
+        body {
+            background-image: url(/images/battle.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            height: 44vh;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .imgdiv {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .leftimg, .rightimg {
+            border-radius: 10px;
+    box-shadow: 20px -11px 8px rgba(0, 0, 0, 0.3);
+    background-color: rgba(146, 146, 146, 0.123);
+
+        }
+
+        .battle button {
+            padding: 15px 70px;
+            font-size: 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .battle button:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+.list { 
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 40vh;
+    overflow-y: auto;
+    width: 30vw;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 0px 50px;
+        }
+
+        .list div {
+            background-color: rgba(255, 232, 232, 0.5);
+            color: white;
+            border-radius: 10px;
+            width: 180px;
+            text-align: center;
+            padding: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .list div:hover {
+            background-color: rgba(255, 232, 232, 0.8);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+
+        
+        .moves {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .move-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .move-button:hover {
+            background-color: #45a049;
+        }
+        
+
+
+    </style>
+
+</head>
+
+<body>
+    <audio id="bgMusic" autoplay loop hidden>
+        <source src="/songs/Opening.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="top">
+
+        <div class="title">Choose your Pokemon!!</div>
+        <div class="imgdiv"><div class="leftimg pokeimg"></div><div class="midimg"><img width="750" height="350" src="/images/bg2.gif" alt=""></div><div class="rightimg pokeimg"></div>
+        </div>
+        <div class="battle"><button onclick="battle()">Battle</button></div>
+    </div>
+
+    <div class="container">
+        <div>
+            <div class="subtitle">
+                Your Pokemon:
+            </div>
+            <div class="left list"></div>
+        </div>
+        <div>
+            <div class="subtitle">
+                Your Opponent:
+            </div>
+            <div class="right list"></div>
+        </div>
+    </div>
+
+    <script>
+        async function battle() {
+
+           try {
+               
+                           var left = document.querySelector(".imgdiv").childNodes[0].childNodes[0].id
+                           var right = document.querySelector(".imgdiv").childNodes[2].childNodes[0].id
+               
+                    
+               
+                               
+                                           var your_response = await fetch("https://pokeapi.co/api/v2/pokemon/" + left);
+                                           let your_pokemon = await your_response.json()
+                               
+                                           var opp_response = await fetch("https://pokeapi.co/api/v2/pokemon/" + right);
+                                           let opp_pokemon = await opp_response.json()
+                               
+                                           console.log("Let's battle", " You:", your_pokemon.name, "v/s  Opponent:", opp_pokemon.name)
+                                           var redirectTo = "fight.html?left=" + encodeURIComponent(left) + "&right=" + encodeURIComponent(right);
+                                           window.location.href = redirectTo;
+               
+                                           
+                                        } catch (error) {
+                                            
+                                            alert("Please choose both Your and opponent Pokémon before battling.");
+                                        }
+           }
+            
+
+
+        
+        const capitalizeFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            var audio = document.getElementById("bgMusic");
+            if (audio.canPlayType && audio.src) {
+                audio.play().then(function () {
+                    console.log("Audio is playing.");
+                }).catch(function (error) {
+                    console.error("Error playing audio:", error);
+                });
+            }
+            var listdivs = document.querySelectorAll(".list");
+
+            listdivs.forEach(async (listdiv) => {
+                for (let i = 1; i < 300; i++) {
+                    try {
+                        let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + i);
+                        let pokemon = await response.json();
+                        listdiv.innerHTML += `<div id="${i}" class="listentry">${capitalizeFirstLetter(pokemon.name)}</div>`;
+
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            });
+            document.addEventListener('click', async function (event) {
+                if (event.target.classList.contains('listentry')) {
+                    console.log(event.target.id, event.target.parentNode.classList[0]);
+
+                    var titleElement = document.querySelector('.title');
+                    var imgDivElement = document.querySelector('.imgdiv');
+                    let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + event.target.id);
+                    let pokemon = await response.json();
+                    console.log(pokemon.name)
+                    document.querySelector(".midimg").innerHTML = "<img src='/images/versus.svg' width='100' style='filter: invert(100%);'>"
+                    if ("left" == event.target.parentNode.classList[0]) {
+
+                        titleElement.innerHTML = "Let's Battle!";
+                        imgDivElement.firstElementChild.innerHTML = `<img width="230" id="${pokemon.id}" class="imgdiv" src="${pokemon.sprites.front_default}" />`;
+
+                    }
+                    else {
+                        titleElement.innerHTML = "Let's Battle!";
+                        imgDivElement.lastElementChild.innerHTML = `<img width="230" id="${pokemon.id}" class="imgdiv" src="${pokemon.sprites.front_default}" />`;
+                    }
+
+                }
+            });
+            
+        });
+    </script>
+</body>
+
+</html>
