@@ -205,7 +205,6 @@
             var audio = document.getElementById("bgMusic");
             if (audio.canPlayType && audio.src) {
                 audio.play().then(function () {
-                    console.log("Audio is playing.");
                 }).catch(function (error) {
                     console.error("Error playing audio:", error);
                 });
@@ -226,13 +225,10 @@
             });
             document.addEventListener('click', async function (event) {
                 if (event.target.classList.contains('listentry')) {
-                    console.log(event.target.id, event.target.parentNode.classList[0]);
-
                     var titleElement = document.querySelector('.title');
                     var imgDivElement = document.querySelector('.imgdiv');
                     let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + event.target.id);
                     let pokemon = await response.json();
-                    console.log(pokemon.name)
                     document.querySelector(".midimg").innerHTML = "<img src='https://kapilsareen.github.io/Pokeapi-Project/images/versus.svg' width='100' style='filter: invert(100%);'>"
                     if ("left" == event.target.parentNode.classList[0]) {
 
