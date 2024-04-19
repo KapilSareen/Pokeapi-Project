@@ -439,20 +439,12 @@ openModalButtons.forEach(button => {
         const parentDiv = event.target.closest('.move-button');
         const power = parentDiv.getAttribute('data-power');
         const accuracy = parentDiv.getAttribute('data-accuracy');
-        console.log('HP',right_hp)
-        console.log('DEFENCE',right_defence)
-        console.log("Power:", power);
-        console.log("Accuracy:", accuracy);
 
         const secondParentClass = parentDiv.parentNode.parentNode.classList;
 
-        console.log(secondParentClass)
-
-
 if (power != "null") {
      if("left" == secondParentClass[0]){
-            console.log("no")
-            console.log()
+
             if(right_hp>0){
             if(right_hp>power/3){
                 if(power>=right_defence/2 ){
@@ -573,7 +565,7 @@ if (power != "null") {
     
             var stat = document.querySelector(".imgdiv");
                     stat.style.marginBottom = "60px";
-                    document.querySelector(".tail").innerHTML=`<button href="/index.html">Home</button ><button href="/html/battle.html">Battle</button>`
+                    document.querySelector(".tail").innerHTML=`<button href="https://kapilsareen.github.io/Pokeapi-Project//index.html">Home</button ><button href="https://kapilsareen.github.io/Pokeapi-Project//html/battle.html">Battle</button>`
 
                 }, 2000);    
         }
