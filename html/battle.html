@@ -233,7 +233,7 @@
                     let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + event.target.id);
                     let pokemon = await response.json();
                     console.log(pokemon.name)
-                    document.querySelector(".midimg").innerHTML = "<img src='/images/versus.svg' width='100' style='filter: invert(100%);'>"
+                    document.querySelector(".midimg").innerHTML = "<img src='https://kapilsareen.github.io/Pokeapi-Project/images/versus.svg' width='100' style='filter: invert(100%);'>"
                     if ("left" == event.target.parentNode.classList[0]) {
 
                         titleElement.innerHTML = "Let's Battle!";
